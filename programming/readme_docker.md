@@ -63,22 +63,23 @@ FIRMWARE_DIRECTORY="/home/$USER/tCam/tCam/firmware"
 TCAM_SERIAL_PORT="/dev/ttyUSB0"
 
 docker run --rm \
-    --device /dev/ttyUSB0:/dev/ttyUSB0 \
+    --device $TCAM_SERIAL_PORT:$TCAM_SERIAL_PORT \
     --volume $FIRMWARE_DIRECTORY:/project:Z \
     --workdir /project \
     espressif/idf:release-v4.4 \
     idf.py -p $TCAM_SERIAL_PORT flash
 ```
 
-With Podman:
+With Podman (and SELINUX enabled):
 
 ```
 FIRMWARE_DIRECTORY="/home/$USER/tCam/tCam/firmware"
 TCAM_SERIAL_PORT="/dev/ttyUSB0"
 
 podman run --rm \
-    --device /dev/ttyUSB0:/dev/ttyUSB0 \
+    --device $TCAM_SERIAL_PORT:$TCAM_SERIAL_PORT \
     --annotation run.oci.keep_original_groups=1 \
+    --security-opt label=disable \
     --volume $FIRMWARE_DIRECTORY:/project:Z \
     --workdir /project \
     espressif/idf:release-v4.4 \
@@ -114,4 +115,5 @@ docker image rm espressif/idf:release-v4.4
 #### Helpful References
 https://hub.docker.com/r/espressif/idf
 https://github.com/containers/podman/issues/4477#issuecomment-584024773
+https://github.com/containers/podman/issues/9706#issuecomment-799251672
 
